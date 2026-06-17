@@ -159,7 +159,6 @@ header h1::after {
     border-radius: 50%;
     width: 48px;
     height: 48px;
-    font-size: 22px;
     cursor: pointer;
     box-shadow: var(--shadow-sm);
     transition: all var(--transition);
@@ -168,6 +167,11 @@ header h1::after {
     justify-content: center;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+}
+#themeBtn img {
+    width: 28px;
+    height: 28px;
+    display: block;
 }
 #themeBtn:hover {
     transform: scale(1.08) rotate(6deg);
@@ -565,7 +569,8 @@ h3 {
     }
     .stat-item { flex: 1 0 100%; min-width: unset; }
     .theme-toggle { top: 12px; right: 12px; }
-    #themeBtn { width: 42px; height: 42px; font-size: 18px; }
+    #themeBtn { width: 42px; height: 42px; }
+    #themeBtn img { width: 24px; height: 24px; }
     .modal-content { padding: 24px 18px; }
     .offline-banner { font-size: 14px; padding: 10px 12px; }
 }
@@ -582,6 +587,7 @@ h3 {
     .modal-buttons { flex-direction: column; gap: 8px; }
     .modal-btn { width: 100%; }
     .theme-toggle { top: 8px; right: 8px; }
-    #themeBtn { width: 38px; height: 38px; font-size: 16px; }
+    #themeBtn { width: 38px; height: 38px; }
+    #themeBtn img { width: 20px; height: 20px; }
     .stat-item .value { font-size: 20px; }
 }

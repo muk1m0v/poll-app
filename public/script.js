@@ -16,6 +16,7 @@ const userStatus = document.getElementById('userStatus');
 const optionBtns = document.querySelectorAll('.option-btn');
 const voteMessage = document.getElementById('voteMessage');
 const themeBtn = document.getElementById('themeBtn');
+const themeIcon = document.getElementById('themeIcon');
 const statsContent = document.getElementById('statsContent');
 const modal = document.getElementById('confirmModal');
 const modalConfirm = document.getElementById('modalConfirm');
@@ -34,7 +35,6 @@ function updateOnlineStatus() {
 
 window.addEventListener('online', updateOnlineStatus);
 window.addEventListener('offline', updateOnlineStatus);
-// При загрузке проверяем
 updateOnlineStatus();
 
 // ========== Тема ==========
@@ -51,10 +51,10 @@ function applyTheme(t) {
     theme = t;
     if (t === 'dark') {
         document.documentElement.setAttribute('data-theme', 'dark');
-        themeBtn.querySelector('.icon').textContent = '🌙';
+        themeIcon.src = 'img/sun.png'; // при тёмной показываем солнце (чтобы переключить на светлую)
     } else {
         document.documentElement.removeAttribute('data-theme');
-        themeBtn.querySelector('.icon').textContent = '☀️';
+        themeIcon.src = 'img/moon.png'; // при светлой показываем луну (чтобы переключить на тёмную)
     }
 }
 
@@ -93,11 +93,11 @@ loginBtn.addEventListener('click', async () => {
     localStorage.setItem('pollUser', JSON.stringify(currentUser));
     const voted = await checkVoted(name);
     hasVoted = voted;
-    
+
     loginBlock.style.display = 'none';
     voteBlock.style.display = 'block';
     userNameDisplay.textContent = `👤 ${name}`;
-    
+
     if (hasVoted) {
         userStatus.textContent = '✅ Голос учтён';
         userStatus.classList.add('voted');
@@ -184,7 +184,6 @@ optionBtns.forEach(btn => {
 modalConfirm.addEventListener('click', async () => {
     modal.classList.remove('active');
     if (!currentUser || !selectedChoice) return;
-    // Проверяем интернет перед отправкой
     if (!navigator.onLine) {
         voteMessage.textContent = '❌ Нет интернет-соединения';
         voteMessage.className = 'vote-message error';
