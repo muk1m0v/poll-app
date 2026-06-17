@@ -240,7 +240,7 @@ h3 {
 #loginBtn {
     padding: 14px;
     border: none;
-    border-radius: var(--radius-md);
+    border-radius: 10px;
     background: var(--accent);
     color: #fff;
     font-size: 18px;
@@ -288,12 +288,17 @@ h3 {
     color: var(--green);
 }
 
+/* ===== КНОПКИ ВРЕМЕНИ — ГИБКАЯ СЕТКА ===== */
 .options-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 12px;
 }
 .option-btn {
+    flex: 1 1 140px;
+    max-width: 200px;
+    min-width: 100px;
     padding: 16px 8px;
     border: 2px solid var(--border-color);
     border-radius: var(--radius-md);
@@ -325,6 +330,7 @@ h3 {
     background: var(--accent-light);
     box-shadow: 0 0 0 3px var(--accent-glow);
 }
+
 .vote-message {
     margin-top: 16px;
     text-align: center;
@@ -421,7 +427,6 @@ h3 {
     color: #fff;
     letter-spacing: 0.02em;
 }
-/* Цвета для каждого варианта */
 .choice-10-12 { background: var(--teal); color: #1a1a2e; }
 .choice-12-14 { background: var(--blue); }
 .choice-14-16 { background: var(--orange); color: #2d2d2d; }
@@ -513,9 +518,11 @@ h3 {
 @media (max-width: 600px) {
     body { padding: 12px 10px 30px; }
     .card { padding: 18px 16px 22px; border-radius: var(--radius-md); }
-    .options-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
+    .option-btn {
+        flex: 1 1 120px;
+        min-width: 80px;
+        font-size: 14px;
+        padding: 14px 6px;
     }
     .stat-item { flex: 1 0 100%; min-width: unset; }
     .theme-toggle { top: 12px; right: 12px; }
@@ -524,8 +531,13 @@ h3 {
 }
 
 @media (max-width: 420px) {
-    .options-grid { grid-template-columns: 1fr; }
-    .option-btn { padding: 16px 10px; font-size: 16px; }
+    .option-btn {
+        flex: 1 1 100%;
+        max-width: 100%;
+        min-width: unset;
+        padding: 16px 10px;
+        font-size: 16px;
+    }
     header h1 { font-size: 24px; }
     .modal-buttons { flex-direction: column; gap: 8px; }
     .modal-btn { width: 100%; }
