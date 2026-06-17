@@ -16,15 +16,16 @@
     <div class="container">
         <header>
             <h1>🗳️ Когда начинать урок?</h1>
+            <p class="subheader">Выберите удобное время для занятий</p>
         </header>
 
-        <!-- Блок входа (только имя) -->
+        <!-- Блок входа -->
         <div id="loginBlock" class="login-block card">
             <div class="login-form">
-                <h2>Введите ваше имя</h2>
-                <input type="text" id="nameInput" placeholder="Только буквы, 4–12 символов" maxlength="12" />
+                <h2>👋 Введите ваше имя</h2>
+                <input type="text" id="nameInput" placeholder="Только буквы, 4–12 символов" maxlength="12" autocomplete="off" />
                 <div id="nameError" class="error-msg"></div>
-                <button id="loginBtn" disabled>Войти</button>
+                <button id="loginBtn" disabled>Войти и голосовать</button>
             </div>
         </div>
 
@@ -32,10 +33,12 @@
         <div id="voteBlock" class="vote-block card" style="display:none;">
             <div class="user-info">
                 <span id="userNameDisplay"></span>
+                <span class="user-status" id="userStatus">⏳ Ожидание голоса</span>
             </div>
             <div class="vote-options">
-                <h3>Выберите удобное время</h3>
+                <h3>📅 Выберите интервал</h3>
                 <div class="options-grid">
+                    <button class="option-btn" data-choice="10-12">10:00 – 12:00</button>
                     <button class="option-btn" data-choice="12-14">12:00 – 14:00</button>
                     <button class="option-btn" data-choice="14-16">14:00 – 16:00</button>
                     <button class="option-btn" data-choice="16-18">16:00 – 18:00</button>
@@ -54,11 +57,12 @@
         </div>
     </div>
 
-    <!-- Модальное окно -->
+    <!-- Модальное окно подтверждения -->
     <div id="confirmModal" class="modal">
         <div class="modal-content">
-            <h3>Подтверждение</h3>
-            <p>Вы точно хотите проголосовать?<br /><span style="font-size:0.9em;color:var(--text-secondary);">Право изменить голос не будет!</span></p>
+            <h3>❗ Подтверждение</h3>
+            <p>Вы точно хотите проголосовать за <strong id="confirmChoiceDisplay"></strong>?<br />
+            <span style="font-size:0.9em;color:var(--text-secondary);">⚠️ Право изменить голос не будет!</span></p>
             <div class="modal-buttons">
                 <button id="modalConfirm" class="modal-btn confirm-btn">Да, голосую</button>
                 <button id="modalCancel" class="modal-btn cancel-btn">Отмена</button>

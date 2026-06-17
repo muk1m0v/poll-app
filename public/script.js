@@ -1,5 +1,5 @@
 // ========== Глобальные переменные ==========
-let currentUser = null;       // { name }
+let currentUser = null;
 let hasVoted = false;
 let selectedChoice = null;
 
@@ -12,6 +12,7 @@ const nameInput = document.getElementById('nameInput');
 const nameError = document.getElementById('nameError');
 const loginBtn = document.getElementById('loginBtn');
 const userNameDisplay = document.getElementById('userNameDisplay');
+const userStatus = document.getElementById('userStatus');
 const optionBtns = document.querySelectorAll('.option-btn');
 const voteMessage = document.getElementById('voteMessage');
 const themeBtn = document.getElementById('themeBtn');
@@ -19,6 +20,7 @@ const statsContent = document.getElementById('statsContent');
 const modal = document.getElementById('confirmModal');
 const modalConfirm = document.getElementById('modalConfirm');
 const modalCancel = document.getElementById('modalCancel');
+const confirmChoiceDisplay = document.getElementById('confirmChoiceDisplay');
 
 // ========== Тема ==========
 let theme = localStorage.getItem('theme') || 'light';
@@ -43,7 +45,6 @@ function applyTheme(t) {
 
 // ========== Валидация имени ==========
 function validateName(name) {
-    // Только буквы (русские и латинские), 4–12 символов
     return /^[a-zA-Zа-яА-ЯёЁ]{4,12}$/.test(name);
 }
 
@@ -77,21 +78,28 @@ loginBtn.addEventListener('click', async () => {
     localStorage.setItem('pollUser', JSON.stringify(currentUser));
     const voted = await checkVoted(name);
     hasVoted = voted;
-    // Переключаем интерфейс
+    
     loginBlock.style.display = 'none';
     voteBlock.style.display = 'block';
     userNameDisplay.textContent = `👤 ${name}`;
+    
     if (hasVoted) {
-        voteMessage.textContent = '✅ Вы уже проголосовали. Спасибо!';
+        userStatus.textContent = '✅ Голос учтён';
+        userStatus.classList.add('voted');
+        voteMessage.textContent = 'Вы уже проголосовали. Спасибо!';
+        voteMessage.className = 'vote-message success';
         optionBtns.forEach(btn => btn.disabled = true);
     } else {
-        voteMessage.textContent = 'Выберите удобное время';
+        userStatus.textContent = '⏳ Ожидание голоса';
+        userStatus.classList.remove('voted');
+        voteMessage.textContent = 'Выберите один из вариантов';
+        voteMessage.className = 'vote-message';
         optionBtns.forEach(btn => btn.disabled = false);
     }
     fetchStats();
 });
 
-// Проверка, голосовал ли пользователь
+// Проверка голосования
 async function checkVoted(name) {
     try {
         const resp = await fetch(`${API_BASE}/check/${encodeURIComponent(name)}`);
@@ -116,10 +124,16 @@ window.addEventListener('DOMContentLoaded', async () => {
             voteBlock.style.display = 'block';
             userNameDisplay.textContent = `👤 ${user.name}`;
             if (hasVoted) {
-                voteMessage.textContent = '✅ Вы уже проголосовали. Спасибо!';
+                userStatus.textContent = '✅ Голос учтён';
+                userStatus.classList.add('voted');
+                voteMessage.textContent = 'Вы уже проголосовали. Спасибо!';
+                voteMessage.className = 'vote-message success';
                 optionBtns.forEach(btn => btn.disabled = true);
             } else {
-                voteMessage.textContent = 'Выберите удобное время';
+                userStatus.textContent = '⏳ Ожидание голоса';
+                userStatus.classList.remove('voted');
+                voteMessage.textContent = 'Выберите один из вариантов';
+                voteMessage.className = 'vote-message';
                 optionBtns.forEach(btn => btn.disabled = false);
             }
             fetchStats();
@@ -137,7 +151,19 @@ window.addEventListener('DOMContentLoaded', async () => {
 optionBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         if (hasVoted) return;
+        // Снимаем выделение со всех
+        optionBtns.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
         selectedChoice = btn.dataset.choice;
+        // Показываем модалку с выбором
+        const labels = {
+            '10-12': '10:00 – 12:00',
+            '12-14': '12:00 – 14:00',
+            '14-16': '14:00 – 16:00',
+            '16-18': '16:00 – 18:00',
+            '18-20': '18:00 – 20:00'
+        };
+        confirmChoiceDisplay.textContent = labels[selectedChoice] || selectedChoice;
         modal.classList.add('active');
     });
 });
@@ -158,25 +184,33 @@ modalConfirm.addEventListener('click', async () => {
         if (data.success) {
             hasVoted = true;
             voteMessage.textContent = '✅ Ваш голос учтён! Спасибо.';
+            voteMessage.className = 'vote-message success';
             optionBtns.forEach(btn => btn.disabled = true);
+            userStatus.textContent = '✅ Голос учтён';
+            userStatus.classList.add('voted');
             fetchStats();
         } else {
             voteMessage.textContent = '❌ ' + (data.error || 'Ошибка');
+            voteMessage.className = 'vote-message error';
         }
     } catch (e) {
         voteMessage.textContent = '❌ Ошибка соединения';
+        voteMessage.className = 'vote-message error';
         console.error(e);
     }
+    selectedChoice = null;
 });
 
 modalCancel.addEventListener('click', () => {
     modal.classList.remove('active');
     selectedChoice = null;
+    optionBtns.forEach(b => b.classList.remove('selected'));
 });
 modal.addEventListener('click', (e) => {
     if (e.target === modal) {
         modal.classList.remove('active');
         selectedChoice = null;
+        optionBtns.forEach(b => b.classList.remove('selected'));
     }
 });
 
@@ -200,16 +234,18 @@ function renderStats(data) {
     }
 
     const choiceLabels = {
+        '10-12': '10:00–12:00',
         '12-14': '12:00–14:00',
         '14-16': '14:00–16:00',
         '16-18': '16:00–18:00',
         '18-20': '18:00–20:00'
     };
     const colors = {
-        '12-14': '#34c759',
-        '14-16': '#ff9500',
-        '16-18': '#007aff',
-        '18-20': '#af52de'
+        '10-12': '#00cec9',
+        '12-14': '#0984e3',
+        '14-16': '#fdcb6e',
+        '16-18': '#a29bfe',
+        '18-20': '#ff6b6b'
     };
 
     let html = `<div class="stats-summary">`;

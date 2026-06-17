@@ -13,7 +13,6 @@ app.use(express.static('public'));
 const DATA_DIR = path.join(__dirname, 'data');
 const DATA_FILE = path.join(DATA_DIR, 'votes.json');
 
-// Создаём папку и файл, если их нет
 if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
 }
@@ -34,7 +33,8 @@ function writeVotes(votes) {
 app.get('/api/stats', (req, res) => {
     const votes = readVotes();
     const total = votes.length;
-    const choices = { '12-14': 0, '14-16': 0, '16-18': 0, '18-20': 0 };
+    // ✅ Добавлен вариант '10-12'
+    const choices = { '10-12': 0, '12-14': 0, '14-16': 0, '16-18': 0, '18-20': 0 };
     const voters = votes.map(v => ({ name: v.name, choice: v.choice, time: v.timestamp }));
 
     votes.forEach(v => {
@@ -72,13 +72,17 @@ app.post('/api/vote', (req, res) => {
         return res.status(400).json({ error: 'Имя и выбор обязательны' });
     }
     const trimmedName = name.trim();
-    // Проверка имени: только буквы, 4-12 символов
     if (!/^[a-zA-Zа-яА-ЯёЁ]{4,12}$/.test(trimmedName)) {
         return res.status(400).json({ error: 'Имя должно содержать только буквы (4–12 символов)' });
     }
     const votes = readVotes();
     if (votes.find(v => v.name.toLowerCase() === trimmedName.toLowerCase())) {
         return res.status(400).json({ error: 'Это имя уже проголосовало' });
+    }
+    // ✅ Проверяем, что выбор допустим
+    const validChoices = ['10-12', '12-14', '14-16', '16-18', '18-20'];
+    if (!validChoices.includes(choice)) {
+        return res.status(400).json({ error: 'Некорректный вариант' });
     }
     const newVote = {
         name: trimmedName,
