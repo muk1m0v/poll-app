@@ -21,6 +21,21 @@ const modal = document.getElementById('confirmModal');
 const modalConfirm = document.getElementById('modalConfirm');
 const modalCancel = document.getElementById('modalCancel');
 const confirmChoiceDisplay = document.getElementById('confirmChoiceDisplay');
+const offlineBanner = document.getElementById('offlineBanner');
+
+// ========== Обработка интернет-соединения ==========
+function updateOnlineStatus() {
+    if (navigator.onLine) {
+        offlineBanner.style.display = 'none';
+    } else {
+        offlineBanner.style.display = 'block';
+    }
+}
+
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+// При загрузке проверяем
+updateOnlineStatus();
 
 // ========== Тема ==========
 let theme = localStorage.getItem('theme') || 'light';
@@ -151,11 +166,9 @@ window.addEventListener('DOMContentLoaded', async () => {
 optionBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         if (hasVoted) return;
-        // Снимаем выделение со всех
         optionBtns.forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
         selectedChoice = btn.dataset.choice;
-        // Показываем модалку с выбором
         const labels = {
             '10-12': '10:00 – 12:00',
             '12-14': '12:00 – 14:00',
@@ -171,6 +184,12 @@ optionBtns.forEach(btn => {
 modalConfirm.addEventListener('click', async () => {
     modal.classList.remove('active');
     if (!currentUser || !selectedChoice) return;
+    // Проверяем интернет перед отправкой
+    if (!navigator.onLine) {
+        voteMessage.textContent = '❌ Нет интернет-соединения';
+        voteMessage.className = 'vote-message error';
+        return;
+    }
     try {
         const resp = await fetch(`${API_BASE}/vote`, {
             method: 'POST',
@@ -216,6 +235,10 @@ modal.addEventListener('click', (e) => {
 
 // ========== Статистика ==========
 async function fetchStats() {
+    if (!navigator.onLine) {
+        statsContent.innerHTML = '<div class="stats-loading">⛔ Нет соединения с интернетом</div>';
+        return;
+    }
     try {
         const resp = await fetch(`${API_BASE}/stats`);
         const data = await resp.json();
@@ -278,7 +301,7 @@ function renderStats(data) {
 
 // Обновление статистики каждые 30 сек
 setInterval(() => {
-    if (document.visibilityState === 'visible') {
+    if (document.visibilityState === 'visible' && navigator.onLine) {
         fetchStats();
     }
 }, 30000);

@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+    <!-- Блок уведомления об отсутствии интернета -->
+    <div id="offlineBanner" class="offline-banner" style="display:none;">
+        <span>⚠️ Нет соединения с интернетом</span>
+    </div>
+
     <div class="theme-toggle">
         <button id="themeBtn" aria-label="Переключить тему">
             <span class="icon">☀️</span>
@@ -42,7 +47,7 @@
                     <button class="option-btn" data-choice="12-14">12:00 – 14:00</button>
                     <button class="option-btn" data-choice="14-16">14:00 – 16:00</button>
                     <button class="option-btn" data-choice="16-18">16:00 – 18:00</button>
-                    <button class="option-btn over" data-choice="18-20">18:00 – 20:00</button>
+                    <button class="option-btn" data-choice="18-20">18:00 – 20:00</button>
                 </div>
                 <div id="voteMessage" class="vote-message"></div>
             </div>
@@ -56,6 +61,11 @@
             </div>
         </div>
     </div>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <p>Softclub</p>
+    </footer>
 
     <!-- Модальное окно подтверждения -->
     <div id="confirmModal" class="modal">
