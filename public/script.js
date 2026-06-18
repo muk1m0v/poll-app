@@ -51,10 +51,10 @@ function applyTheme(t) {
     theme = t;
     if (t === 'dark') {
         document.documentElement.setAttribute('data-theme', 'dark');
-        themeIcon.src = '/img/sun.png'; // при тёмной показываем солнце (чтобы переключить на светлую)
+        themeIcon.src = '/img/moon.png'; // при тёмной показываем солнце (чтобы переключить на светлую)
     } else {
         document.documentElement.removeAttribute('data-theme');
-        themeIcon.src = '/img/moon.png'; // при светлой показываем луну (чтобы переключить на тёмную)
+        themeIcon.src = '/img/sun.png'; // при светлой показываем луну (чтобы переключить на тёмную)
     }
 }
 
